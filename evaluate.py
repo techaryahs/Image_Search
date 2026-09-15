@@ -10,8 +10,8 @@ GROUND_TRUTH = {
     "prototype1.jpeg": "gold1.jpeg",
     "prototype2.jpeg": "gold2.jpeg",
     "prototype3.jpeg": "gold3.jpeg",
-    "prototype6.png": "gold4.png",
 }
+
 
 
 # Reverse ground truth mapping: Gold filename -> Prototype filename
@@ -108,4 +108,4 @@ def evaluate_all():
 
 
 if __name__ == "__main__":
-    evaluate_all()
+    evaluate_all()

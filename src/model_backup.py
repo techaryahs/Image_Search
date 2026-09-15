@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 
-from PIL import Image
+from PIL import Image, ImageOps
 from transformers import AutoImageProcessor, AutoModel
 
 from src.config import MODEL_NAME
@@ -72,30 +72,33 @@ class DINOv2Encoder:
             rgb_image
         )
 
+
         # ------------------------------------------------
-        # VIEW 2: Horizontal Flip
+        # VIEW 2: Grayscale
         # ------------------------------------------------
 
-        flipped_image = rgb_image.transpose(
-            Image.Transpose.FLIP_LEFT_RIGHT
+        gray_image = ImageOps.grayscale(
+            rgb_image
+        ).convert("RGB")
+
+        gray_features = self._extract_features(
+            gray_image
         )
 
-        flipped_features = self._extract_features(
-            flipped_image
-        )
 
         # ------------------------------------------------
         # Feature Fusion
         # ------------------------------------------------
 
-        combined = (
-            rgb_features + flipped_features
-        ) / 2.0
+        combined = np.concatenate(
+            [
+                rgb_features,
+                gray_features
+            ]
+        )
 
-        # ------------------------------------------------
+
         # Final L2 normalization
-        # ------------------------------------------------
-
         combined = combined / np.linalg.norm(
             combined
         )

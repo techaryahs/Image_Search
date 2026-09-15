@@ -63,43 +63,23 @@ class DINOv2Encoder:
     def encode_image(self, image: Image.Image):
 
         # ------------------------------------------------
-        # VIEW 1: Original RGB
+        # Original RGB image only
         # ------------------------------------------------
 
         rgb_image = image.convert("RGB")
 
-        rgb_features = self._extract_features(
+        features = self._extract_features(
             rgb_image
         )
-
-        # ------------------------------------------------
-        # VIEW 2: Horizontal Flip
-        # ------------------------------------------------
-
-        flipped_image = rgb_image.transpose(
-            Image.Transpose.FLIP_LEFT_RIGHT
-        )
-
-        flipped_features = self._extract_features(
-            flipped_image
-        )
-
-        # ------------------------------------------------
-        # Feature Fusion
-        # ------------------------------------------------
-
-        combined = (
-            rgb_features + flipped_features
-        ) / 2.0
 
         # ------------------------------------------------
         # Final L2 normalization
         # ------------------------------------------------
 
-        combined = combined / np.linalg.norm(
-            combined
+        features = features / np.linalg.norm(
+            features
         )
 
-        return combined.astype(
+        return features.astype(
             np.float32
         )
