@@ -30,7 +30,7 @@ MODEL_NAME = "facebook/dinov2-base"
 
 TOP_K = 5
 
-SIMILARITY_THRESHOLD = 0.15
+SIMILARITY_THRESHOLD = 0.80
 
 
 IMAGE_EXTENSIONS = {
@@ -39,4 +39,4 @@ IMAGE_EXTENSIONS = {
     ".png",
     ".webp",
     ".bmp"
-}
+}

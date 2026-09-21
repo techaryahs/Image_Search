@@ -1,0 +1,72 @@
+[
+    {
+        "id": "3b4f3346-a65a-4595-915e-8fb0af885f61",
+        "name": "Gold Pearl Necklace",
+        "gender": "Female",
+        "type": "Necklace",
+        "subtype": "Bridal Necklace",
+        "collection": "Gold",
+        "description": "Traditional gold pearl bridal necklace",
+        "image": "data\\gold\\Gold_Pearl_Necklace_a46db5f5.jpeg"
+    },
+    {
+        "id": "7c9633d9-e5cb-47a2-bd96-e026066ffdc3",
+        "name": "Gold Diamond Ring",
+        "gender": "Female",
+        "type": "Ring",
+        "subtype": "Solitaire Ring",
+        "collection": "Gold",
+        "description": "",
+        "image": "data\\gold\\Gold_Diamond_Ring_2db28af2.jpg"
+    },
+    {
+        "id": "4d59ff34-893c-4ba3-8904-507465f97943",
+        "name": "Test Gold Ring",
+        "gender": "Female",
+        "type": "Ring",
+        "subtype": "Solitaire Ring",
+        "collection": "Gold",
+        "description": "",
+        "image": "data\\gold\\Test_Gold_Ring_1b97cd72.jpeg"
+    },
+    {
+        "id": "51d7de38-4559-43ac-b049-7acc4bb38f28",
+        "name": "Ring_Prototype",
+        "gender": "Female",
+        "type": "Ring",
+        "subtype": "Solitaire Ring",
+        "collection": "Prototype",
+        "description": "",
+        "image": "data\\prototype\\Ring_Prototype_dad41d60.jpeg"
+    },
+    {
+        "id": "fa367ba9-cf08-4162-8b33-36c49393e8af",
+        "name": "Gold Ring",
+        "gender": "Female",
+        "type": "Ring",
+        "subtype": "Solitaire Ring",
+        "collection": "Gold",
+        "description": "",
+        "image": "data\\gold\\Gold_Ring_510d9c50.jpeg"
+    },
+    {
+        "id": "7d1f36c0-bae6-43f5-a4d9-0520150305ab",
+        "name": "Floral Gold Ring",
+        "gender": "Female",
+        "type": "Ring",
+        "subtype": "Solitaire Ring",
+        "collection": "Prototype",
+        "description": "",
+        "image": "data\\prototype\\Floral_Gold_Ring_a2800b5f.jpeg"
+    },
+    {
+        "id": "df104897-b75d-42a6-9fbc-1c14f3ade591",
+        "name": "Floral Gold Ring",
+        "gender": "Female",
+        "type": "Ring",
+        "subtype": "Solitaire Ring",
+        "collection": "Gold",
+        "description": "",
+        "image": "data\\gold\\Floral_Gold_Ring_2085a371.jpeg"
+    }
+]
