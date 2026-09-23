@@ -68,5 +68,15 @@
         "collection": "Gold",
         "description": "",
         "image": "data\\gold\\Floral_Gold_Ring_2085a371.jpeg"
+    },
+    {
+        "id": "bda35177-251c-4225-9564-3325fd5d9842",
+        "name": "Gold Ring",
+        "gender": "Female",
+        "type": "Ring",
+        "subtype": "Solitaire Ring",
+        "collection": "Gold",
+        "description": "",
+        "image": "data\\gold\\Gold_Ring_fb5f968c.jpeg"
     }
 ]
