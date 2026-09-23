@@ -1,8 +1,9 @@
-torch
-torchvision
-transformers
-faiss-cpu
-pillow
-tqdm
-numpy
-streamlit
+torch==2.1.0+cpu
+torchvision==0.16.0+cpu
+--extra-index-url https://download.pytorch.org/whl/cpu
+transformers==4.37.2
+faiss-cpu==1.7.4
+pillow==10.2.0
+tqdm==4.66.2
+numpy==1.26.4
+streamlit==1.32.0
