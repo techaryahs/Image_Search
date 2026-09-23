@@ -8,17 +8,6 @@ from src.sidebar_style import apply_sidebar_style
 apply_sidebar_style()
 
 # ============================================================
-# PAGE CONFIG
-# ============================================================
-
-st.set_page_config(
-    page_title="Jewelry Catalog | JewelVision AI",
-    page_icon="📦",
-    layout="wide",
-)
-
-
-# ============================================================
 # PATHS
 # ============================================================
 

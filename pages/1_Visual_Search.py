@@ -41,17 +41,6 @@ def get_jewelry_details(image_path):
     return None
 
 # ============================================================
-# PAGE CONFIG
-# ============================================================
-
-st.set_page_config(
-    page_title="Visual Search | JewelVision AI",
-    page_icon="🔎",
-    layout="wide",
-)
-
-apply_sidebar_style()
-# ============================================================
 # FUNCTIONS
 # ============================================================
 
@@ -83,46 +72,6 @@ st.markdown(
                 transparent 25%
             ),
             #08090d;
-    }
-
-        /* PROFESSIONAL SIDEBAR */
-
-    section[data-testid="stSidebar"] {
-        background: linear-gradient(
-            180deg,
-            #171b27 0%,
-            #10131d 100%
-        );
-        border-right: 1px solid #292e3a;
-    }
-
-    section[data-testid="stSidebar"] > div {
-        padding-top: 1.5rem;
-    }
-
-        /* SIDEBAR MENU */
-
-    section[data-testid="stSidebar"] [data-testid="stSidebarNav"] a {
-        border-radius: 10px;
-        margin: 4px 8px;
-        padding: 10px 12px;
-        color: #d8dbe3;
-        font-weight: 600;
-    }
-
-    section[data-testid="stSidebar"] [data-testid="stSidebarNav"] a:hover {
-        background: rgba(225, 192, 113, 0.10);
-        color: #e1c071;
-    }
-
-    section[data-testid="stSidebar"] [data-testid="stSidebarNav"] a[aria-current="page"] {
-        background: linear-gradient(
-            90deg,
-            rgba(225, 192, 113, 0.20),
-            rgba(225, 192, 113, 0.06)
-        );
-        color: #e1c071;
-        border-left: 3px solid #e1c071;
     }
 
     .main .block-container {

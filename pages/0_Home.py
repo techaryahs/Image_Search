@@ -7,13 +7,6 @@ from src.sidebar_style import apply_sidebar_style
 apply_sidebar_style()
 
 
-st.set_page_config(
-    page_title="JewelVision AI",
-    page_icon="💎",
-    layout="wide",
-)
-
-
 # ============================================================
 # DATA
 # ============================================================

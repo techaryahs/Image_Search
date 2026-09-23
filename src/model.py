@@ -1,10 +1,17 @@
 import torch
 import numpy as np
+import streamlit as st
 
 from PIL import Image, ImageOps
 from transformers import AutoImageProcessor, AutoModel
 
 from src.config import MODEL_NAME
+
+
+@st.cache_resource
+def get_dinov2_encoder():
+    """Load DINOv2 model once and cache it across all sessions."""
+    return DINOv2Encoder()
 
 
 class DINOv2Encoder:

@@ -11,19 +11,8 @@ from src.config import (
 from src.build_index import build_all_indexes
 from src.sidebar_style import apply_sidebar_style
 
-
-
-# ============================================================
-# PAGE CONFIG
-# ============================================================
-
-st.set_page_config(
-    page_title="Add Jewelry | JewelVision AI",
-    page_icon="✨",
-    layout="wide",
-)
-
 apply_sidebar_style()
+
 # ============================================================
 # PATHS
 # ============================================================
