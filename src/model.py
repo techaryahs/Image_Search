@@ -23,7 +23,7 @@ def get_dinov2_encoder():
 
 class DINOv2Encoder:
 
-    def _init_(self):
+    def __init__(self):
 
         # Render Free instance uses CPU
         self.device = torch.device("cpu")
