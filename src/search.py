@@ -11,14 +11,14 @@ from src.config import (
     TOP_K,
 )
 
-from src.model import DINOv2Encoder, get_dinov2_encoder
+from src.model import ImageEncoder, get_encoder
 
 
 class BidirectionalJewelrySearch:
 
-    def __init__(self, encoder: DINOv2Encoder = None):
+    def __init__(self, encoder: ImageEncoder = None):
         print("Loading Bidirectional Jewelry Search Engine...")
-        self.encoder = encoder if encoder is not None else get_dinov2_encoder()
+        self.encoder = encoder if encoder is not None else get_encoder()
         self.load_indexes()
 
     def load_indexes(self):

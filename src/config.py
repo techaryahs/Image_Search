@@ -24,10 +24,6 @@ PROTOTYPE_PATHS_FILE = EMBEDDING_DIR / "prototype_paths.npy"
 PROTOTYPE_INDEX_FILE = EMBEDDING_DIR / "prototype.index"
 
 
-# DINOv2
-MODEL_NAME = "facebook/dinov2-base"
-
-
 TOP_K = 5
 
 SIMILARITY_THRESHOLD = 0.80

@@ -4,129 +4,104 @@ import os
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 import torch
+import torch.nn as nn
 import numpy as np
 import streamlit as st
 
 from PIL import Image, ImageOps
-from transformers import AutoImageProcessor, AutoModel
-
-from src.config import MODEL_NAME
+from torchvision import models, transforms
 
 
 @st.cache_resource(show_spinner="Loading AI model...")
-def get_dinov2_encoder():
+def get_encoder():
     """
-    Load DINOv2 only once and reuse it across Streamlit reruns.
+    Load MobileNetV3 only once and reuse it across all Streamlit reruns.
+    ~20MB model, fits comfortably in Render free tier 512MB RAM.
     """
-    return DINOv2Encoder()
+    return ImageEncoder()
 
 
-class DINOv2Encoder:
+class ImageEncoder:
+    """
+    Lightweight image encoder using MobileNetV3-Large.
+    Strips the classifier head and uses the pooled feature vector (~960-D).
+    Combined RGB + grayscale view gives 1920-D final embedding.
+    """
 
     def __init__(self):
 
-        # Render Free instance uses CPU
         self.device = torch.device("cpu")
 
-        print("========================================")
-        print("Using device:", self.device)
-        print("Loading DINOv2 model...")
-        print("========================================")
+        print("=" * 50)
+        print("Loading MobileNetV3-Large encoder...")
+        print("Device:", self.device)
+        print("=" * 50)
 
-        # Image processor
-        self.processor = AutoImageProcessor.from_pretrained(
-            MODEL_NAME
+        # Load pretrained MobileNetV3-Large
+        backbone = models.mobilenet_v3_large(
+            weights=models.MobileNet_V3_Large_Weights.IMAGENET1K_V2
         )
 
-        # Load model
-        self.model = AutoModel.from_pretrained(
-            MODEL_NAME
+        # Remove classifier — keep features + adaptive pool only
+        self.model = nn.Sequential(
+            backbone.features,
+            backbone.avgpool,
+            nn.Flatten(),
         )
 
-        # CPU
         self.model = self.model.to(self.device)
-
-        # Evaluation mode
         self.model.eval()
 
-        print("========================================")
-        print("DINOv2 model loaded successfully.")
-        print("========================================")
+        # ImageNet normalization
+        self.transform = transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225],
+            ),
+        ])
 
-    def _extract_features(self, image: Image.Image):
+        print("MobileNetV3 loaded successfully.")
+        print("=" * 50)
 
-        # Process image
-        inputs = self.processor(
-            images=image,
-            return_tensors="pt"
-        )
+    def _extract_features(self, image: Image.Image) -> np.ndarray:
+        """Extract 960-D feature vector from a PIL image."""
+        img_tensor = self.transform(image).unsqueeze(0).to(self.device)
 
-        # Move tensors to CPU
-        inputs = {
-            key: value.to(self.device)
-            for key, value in inputs.items()
-        }
-
-        # Inference only
         with torch.inference_mode():
+            features = self.model(img_tensor)
 
-            outputs = self.model(
-                **inputs
-            )
+        vec = features.cpu().numpy()[0]
 
-        # CLS token
-        embedding = outputs.last_hidden_state[:, 0]
+        # L2 normalize
+        norm = np.linalg.norm(vec)
+        if norm > 0:
+            vec = vec / norm
 
-        # L2 normalization
-        embedding = embedding / embedding.norm(
-            dim=-1,
-            keepdim=True
-        )
+        return vec.astype(np.float32)
 
-        # Convert to NumPy
-        return embedding.cpu().numpy()[0]
-
-    def encode_image(self, image: Image.Image):
-
-        # ==================================================
-        # VIEW 1 — ORIGINAL RGB
-        # ==================================================
-
+    def encode_image(self, image: Image.Image) -> np.ndarray:
+        """
+        Dual-view encoding: RGB + grayscale concatenated → 1920-D vector.
+        Improves texture/shape robustness without heavy compute.
+        """
         rgb_image = image.convert("RGB")
 
-        rgb_features = self._extract_features(
-            rgb_image
-        )
+        # View 1 — RGB
+        rgb_features = self._extract_features(rgb_image)
 
-        # ==================================================
-        # VIEW 2 — GRAYSCALE
-        # ==================================================
+        # View 2 — Grayscale (shape/texture focus)
+        gray_image = ImageOps.grayscale(rgb_image).convert("RGB")
+        gray_features = self._extract_features(gray_image)
 
-        gray_image = ImageOps.grayscale(
-            rgb_image
-        ).convert("RGB")
+        # Fuse
+        combined = np.concatenate([rgb_features, gray_features])
 
-        gray_features = self._extract_features(
-            gray_image
-        )
-
-        # ==================================================
-        # FEATURE FUSION
-        # ==================================================
-
-        combined = np.concatenate(
-            [
-                rgb_features,
-                gray_features
-            ]
-        )
-
-        # Final normalization
+        # Final L2 normalize
         norm = np.linalg.norm(combined)
-
         if norm > 0:
             combined = combined / norm
 
-        return combined.astype(
-            np.float32
-        )
+        return combined.astype(np.float32)

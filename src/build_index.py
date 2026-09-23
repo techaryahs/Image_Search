@@ -20,7 +20,7 @@ from src.image_utils import (
     load_image,
 )
 
-from src.model import DINOv2Encoder
+from src.model import ImageEncoder
 
 
 def build_faiss_index(
@@ -28,7 +28,7 @@ def build_faiss_index(
     embedding_output_file: Path,
     paths_output_file: Path,
     index_output_file: Path,
-    encoder: DINOv2Encoder = None,
+    encoder: ImageEncoder = None,
     label: str = "INDEX",
 ):
     """
@@ -50,7 +50,7 @@ def build_faiss_index(
     print(f"\nFound {len(image_paths)} images in {image_directory.name}.")
 
     if encoder is None:
-        encoder = DINOv2Encoder()
+        encoder = ImageEncoder()
 
     embeddings = []
     valid_paths = []
@@ -92,7 +92,7 @@ def build_faiss_index(
     return True
 
 
-def build_gold_index(encoder: DINOv2Encoder = None):
+def build_gold_index(encoder: ImageEncoder = None):
     """
     Build FAISS index for Gold product images.
     """
@@ -106,7 +106,7 @@ def build_gold_index(encoder: DINOv2Encoder = None):
     )
 
 
-def build_prototype_index(encoder: DINOv2Encoder = None):
+def build_prototype_index(encoder: ImageEncoder = None):
     """
     Build FAISS index for Prototype images.
     """
@@ -124,7 +124,7 @@ def build_all_indexes():
     """
     Build both Gold and Prototype FAISS indexes.
     """
-    encoder = DINOv2Encoder()
+    encoder = ImageEncoder()
     build_gold_index(encoder=encoder)
     print()
     build_prototype_index(encoder=encoder)
