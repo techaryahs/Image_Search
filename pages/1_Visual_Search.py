@@ -1,6 +1,4 @@
-from src.sidebar_style import apply_sidebar_style
 
-apply_sidebar_style()
 from pathlib import Path
 import json
 
