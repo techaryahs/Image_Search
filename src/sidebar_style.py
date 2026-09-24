@@ -80,9 +80,11 @@ def apply_sidebar_style():
 
             border: 1px solid rgba(255, 255, 255, 0.06);
 
-            color: #e5e7eb;
+            color: #f0f2f6 !important;
 
-            font-weight: 600;
+            font-weight: 700;
+
+            font-size: 1rem;
 
             transition:
                 background 0.2s ease,

@@ -17,9 +17,13 @@ st.markdown(
     """
     <style>
 
+    /* =============================================
+       BASE
+       ============================================= */
+
     .stApp {
         background: #080a0f;
-        color: #f5f5f5;
+        color: #f0f0f0;
     }
 
     .main .block-container {
@@ -28,59 +32,161 @@ st.markdown(
         padding-bottom: 3rem;
     }
 
-    h1, h2, h3 {
+    /* =============================================
+       HEADINGS — bright white on all screens
+       ============================================= */
+
+    h1, h2, h3, h4, h5, h6 {
         color: #ffffff !important;
     }
 
-    .hero {
-        padding: 60px 20px 40px 20px;
-        text-align: center;
+    /* =============================================
+       BODY TEXT — high contrast
+       ============================================= */
+
+    p, span, div, li {
+        color: #e8e8e8;
     }
 
-    .hero-title {
-        font-size: 3.5rem;
-        font-weight: 800;
-        margin-bottom: 10px;
+    /* =============================================
+       METRIC CARDS — fix dim label + value on mobile
+       ============================================= */
+
+    [data-testid="stMetricLabel"] p,
+    [data-testid="stMetricLabel"] span,
+    [data-testid="stMetricLabel"] {
+        color: #d0d0d0 !important;
+        font-size: 0.95rem !important;
+        font-weight: 600 !important;
     }
 
-    .hero-subtitle {
-        font-size: 1.2rem;
-        color: #9ca3af;
-        margin-bottom: 30px;
+    [data-testid="stMetricValue"] {
+        color: #ffffff !important;
+        font-size: 2rem !important;
+        font-weight: 800 !important;
     }
 
-    .status {
-        display: inline-block;
-        padding: 10px 20px;
-        border-radius: 30px;
-        background: #103c29;
-        color: #4ade80;
+    /* =============================================
+       FORM LABELS — visible on mobile
+       ============================================= */
+
+    label, .stTextInput label, .stSelectbox label,
+    .stTextArea label, .stFileUploader label,
+    .stSlider label, .stRadio label,
+    [data-testid="stWidgetLabel"] p,
+    [data-testid="stWidgetLabel"] span {
+        color: #e0e0e0 !important;
+        font-size: 0.95rem !important;
+        font-weight: 600 !important;
+    }
+
+    /* =============================================
+       CAPTION / HELPER TEXT — readable but softer
+       ============================================= */
+
+    [data-testid="stCaptionContainer"] p,
+    .stCaption, small {
+        color: #b0b8c8 !important;
+        font-size: 0.85rem !important;
+    }
+
+    /* =============================================
+       RADIO BUTTONS — label text visible
+       ============================================= */
+
+    div[role="radiogroup"] label p,
+    div[role="radiogroup"] label span {
+        color: #e8e8e8 !important;
+        font-size: 1rem !important;
+    }
+
+    /* =============================================
+       SLIDER — label and value
+       ============================================= */
+
+    [data-testid="stSlider"] p,
+    [data-testid="stSlider"] span {
+        color: #e0e0e0 !important;
+    }
+
+    /* =============================================
+       SELECT / INPUT — text inside widgets
+       ============================================= */
+
+    .stSelectbox div[data-baseweb="select"] span,
+    .stTextInput input,
+    .stTextArea textarea {
+        color: #f0f0f0 !important;
+    }
+
+    /* =============================================
+       BUTTONS
+       ============================================= */
+
+    .stButton > button {
+        min-height: 48px;
+        border-radius: 10px;
+        border: 1px solid #353a45;
+        background: #15181f;
+        color: #ffffff !important;
         font-weight: 700;
+        font-size: 1rem;
     }
 
-    .feature-card {
-        background: #10131a;
-        border: 1px solid #282e39;
-        border-radius: 16px;
-        padding: 25px;
-        min-height: 180px;
+    .stButton > button:hover {
+        border-color: #caa55c;
+        color: #e3c57d !important;
     }
 
-    .feature-icon {
-        font-size: 2rem;
-        margin-bottom: 15px;
+    /* =============================================
+       SUCCESS / WARNING / INFO BANNERS
+       ============================================= */
+
+    [data-testid="stAlert"] p,
+    [data-testid="stAlert"] span {
+        color: #ffffff !important;
+        font-weight: 600;
     }
 
-    .feature-title {
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: white;
-        margin-bottom: 8px;
-    }
+    /* =============================================
+       MOBILE SPECIFIC
+       ============================================= */
 
-    .feature-text {
-        color: #9ca3af;
-        line-height: 1.6;
+    @media (max-width: 768px) {
+
+        .main .block-container {
+            padding: 0.8rem 1rem 3rem;
+        }
+
+        h1 {
+            font-size: 1.8rem !important;
+        }
+
+        h2 {
+            font-size: 1.4rem !important;
+        }
+
+        h3 {
+            font-size: 1.2rem !important;
+        }
+
+        [data-testid="stMetricValue"] {
+            font-size: 1.6rem !important;
+        }
+
+        [data-testid="stMetricLabel"] {
+            font-size: 0.85rem !important;
+        }
+
+        label,
+        [data-testid="stWidgetLabel"] p {
+            font-size: 0.9rem !important;
+        }
+
+        .stButton > button {
+            font-size: 0.95rem;
+            padding: 0.6rem 1rem;
+        }
     }
 
     </style>
