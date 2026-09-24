@@ -7,7 +7,7 @@
         "subtype": "Bridal Necklace",
         "collection": "Gold",
         "description": "Traditional gold pearl bridal necklace",
-        "image": "data\\gold\\Gold_Pearl_Necklace_a46db5f5.jpeg"
+        "image": "data/gold/Gold_Pearl_Necklace_a46db5f5.jpeg"
     },
     {
         "id": "7c9633d9-e5cb-47a2-bd96-e026066ffdc3",
@@ -17,7 +17,7 @@
         "subtype": "Solitaire Ring",
         "collection": "Gold",
         "description": "",
-        "image": "data\\gold\\Gold_Diamond_Ring_2db28af2.jpg"
+        "image": "data/gold/Gold_Diamond_Ring_2db28af2.jpg"
     },
     {
         "id": "4d59ff34-893c-4ba3-8904-507465f97943",
@@ -27,7 +27,7 @@
         "subtype": "Solitaire Ring",
         "collection": "Gold",
         "description": "",
-        "image": "data\\gold\\Test_Gold_Ring_1b97cd72.jpeg"
+        "image": "data/gold/Test_Gold_Ring_1b97cd72.jpeg"
     },
     {
         "id": "51d7de38-4559-43ac-b049-7acc4bb38f28",
@@ -37,7 +37,7 @@
         "subtype": "Solitaire Ring",
         "collection": "Prototype",
         "description": "",
-        "image": "data\\prototype\\Ring_Prototype_dad41d60.jpeg"
+        "image": "data/prototype/Ring_Prototype_dad41d60.jpeg"
     },
     {
         "id": "fa367ba9-cf08-4162-8b33-36c49393e8af",
@@ -47,7 +47,7 @@
         "subtype": "Solitaire Ring",
         "collection": "Gold",
         "description": "",
-        "image": "data\\gold\\Gold_Ring_510d9c50.jpeg"
+        "image": "data/gold/Gold_Ring_510d9c50.jpeg"
     },
     {
         "id": "7d1f36c0-bae6-43f5-a4d9-0520150305ab",
@@ -57,7 +57,7 @@
         "subtype": "Solitaire Ring",
         "collection": "Prototype",
         "description": "",
-        "image": "data\\prototype\\Floral_Gold_Ring_a2800b5f.jpeg"
+        "image": "data/prototype/Floral_Gold_Ring_a2800b5f.jpeg"
     },
     {
         "id": "df104897-b75d-42a6-9fbc-1c14f3ade591",
@@ -67,7 +67,7 @@
         "subtype": "Solitaire Ring",
         "collection": "Gold",
         "description": "",
-        "image": "data\\gold\\Floral_Gold_Ring_2085a371.jpeg"
+        "image": "data/gold/Floral_Gold_Ring_2085a371.jpeg"
     },
     {
         "id": "bda35177-251c-4225-9564-3325fd5d9842",
@@ -77,6 +77,16 @@
         "subtype": "Solitaire Ring",
         "collection": "Gold",
         "description": "",
-        "image": "data\\gold\\Gold_Ring_fb5f968c.jpeg"
+        "image": "data/gold/Gold_Ring_fb5f968c.jpeg"
+    },
+    {
+        "id": "f345adec-cce3-483e-a309-c0cbf4d41cb9",
+        "name": "Gold Necklace",
+        "gender": "Female",
+        "type": "Necklace",
+        "subtype": "Pendant Necklace",
+        "collection": "Gold",
+        "description": "",
+        "image": "data/gold/Gold_Necklace_ba032b7d.jpeg"
     }
 ]

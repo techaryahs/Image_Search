@@ -357,9 +357,8 @@ if filtered_catalog:
                 # IMAGE
                 # --------------------------------------------
 
-                image_path = BASE_DIR / item.get(
-                    "image",
-                    ""
+                image_path = BASE_DIR / Path(
+                    item.get("image", "").replace("\\", "/")
                 )
 
                 if image_path.exists():

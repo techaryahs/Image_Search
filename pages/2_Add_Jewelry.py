@@ -8,7 +8,6 @@ from src.config import (
     GOLD_INDEX_FILE,
     PROTOTYPE_INDEX_FILE,
 )
-from src.build_index import build_all_indexes
 from src.sidebar_style import apply_sidebar_style
 
 apply_sidebar_style()
@@ -247,9 +246,8 @@ def save_jewelry(
 
         "description": description.strip(),
 
-        "image": str(
-            image_path.relative_to(BASE_DIR)
-        ),
+        # Always store with forward slashes (works on both Linux/Render and Windows)
+        "image": image_path.relative_to(BASE_DIR).as_posix(),
     }
 
 
@@ -616,23 +614,6 @@ if submit_jewelry:
             "✨ Jewelry information saved successfully!"
         )
 
-
-        # ----------------------------------------------------
-        # UPDATE AI INDEX
-        # ----------------------------------------------------
-
-        with st.spinner(
-            "🤖 Updating DINOv2 and FAISS search index..."
-        ):
-
-            build_all_indexes()
-
-        st.success(
-            "🚀 AI search index updated. "
-            "This jewelry is now searchable."
-        )
-
-
         # ----------------------------------------------------
         # RESULT
         # ----------------------------------------------------
@@ -701,6 +682,39 @@ if submit_jewelry:
         st.error(
             f"Unable to add jewelry: {e}"
         )
+
+
+# ============================================================
+# REBUILD AI INDEX (MANUAL)
+# ============================================================
+
+st.divider()
+
+st.subheader("🤖 Rebuild AI Search Index")
+
+st.write(
+    "After adding multiple jewelry items, rebuild the AI index "
+    "to make them all searchable. You only need to do this once "
+    "after finishing all your additions."
+)
+
+rebuild_clicked = st.button(
+    "🔄  Rebuild AI Search Index Now",
+    use_container_width=True,
+)
+
+if rebuild_clicked:
+
+    from src.build_index import build_all_indexes
+
+    with st.spinner(
+        "Rebuilding FAISS search index — this takes 1-2 minutes..."
+    ):
+        build_all_indexes()
+
+    st.success(
+        "✅ AI search index rebuilt. All jewelry is now searchable."
+    )
 
 
 # ============================================================
