@@ -1,5 +1,3 @@
-# src/sidebar_style.py
-
 import streamlit as st
 
 
@@ -10,24 +8,21 @@ def apply_sidebar_style():
         <style>
 
         /* =====================================================
-           SIDEBAR MAIN
+           GLOBAL SIDEBAR
            ===================================================== */
 
         section[data-testid="stSidebar"] {
-            background: #0b0f14 !important;
-            border-right: 1px solid #2d333b !important;
+            background: #0B0F14 !important;
+            border-right: 1px solid #29313A !important;
         }
 
-
-        /* Sidebar inner container */
-
         section[data-testid="stSidebar"] > div {
-            background: #0b0f14 !important;
+            background: #0B0F14 !important;
         }
 
 
         /* =====================================================
-           SIDEBAR TEXT
+           SIDEBAR FONT
            ===================================================== */
 
         section[data-testid="stSidebar"] * {
@@ -39,43 +34,52 @@ def apply_sidebar_style():
         }
 
 
-        /* Normal text */
+        /* =====================================================
+           SIDEBAR NORMAL TEXT
+           ===================================================== */
 
         section[data-testid="stSidebar"] p,
         section[data-testid="stSidebar"] span,
         section[data-testid="stSidebar"] label {
-            color: #e8edf2 !important;
+            color: #E8EDF2 !important;
         }
 
 
         /* =====================================================
-           SIDEBAR TITLE / BRAND
+           SIDEBAR HEADINGS
            ===================================================== */
 
         section[data-testid="stSidebar"] h1,
         section[data-testid="stSidebar"] h2,
         section[data-testid="stSidebar"] h3 {
-            color: #d8b45a !important;
+            color: #D8B45A !important;
             font-weight: 800 !important;
             letter-spacing: 0.3px !important;
         }
 
 
         /* =====================================================
-           NAVIGATION
+           NAVIGATION CONTAINER
            ===================================================== */
 
-        section[data-testid="stSidebar"] [data-testid="stSidebarNav"] {
-            padding-top: 1rem;
+        section[data-testid="stSidebar"]
+        [data-testid="stSidebarNav"] {
+            padding-top: 1rem !important;
         }
 
 
-        /* Navigation links */
+        /* =====================================================
+           NAVIGATION LINKS
+           ===================================================== */
 
         section[data-testid="stSidebar"]
         [data-testid="stSidebarNav"]
         a {
-            color: #dfe5eb !important;
+            display: flex !important;
+            align-items: center !important;
+
+            color: #DDE4EA !important;
+
             background: transparent !important;
 
             border-radius: 10px !important;
@@ -87,64 +91,79 @@ def apply_sidebar_style():
                 sans-serif !important;
 
             font-size: 15px !important;
+
             font-weight: 600 !important;
 
             padding: 0.65rem 0.8rem !important;
 
-            margin: 3px 0 !important;
+            margin: 4px 0 !important;
 
             transition:
                 background 0.2s ease,
-                color 0.2s ease !important;
+                color 0.2s ease,
+                border 0.2s ease !important;
         }
 
 
-        /* Navigation hover */
+        /* =====================================================
+           NAVIGATION HOVER
+           ===================================================== */
 
         section[data-testid="stSidebar"]
         [data-testid="stSidebarNav"]
         a:hover {
-            background: #171d25 !important;
-            color: #e1bd67 !important;
+            background: #171D25 !important;
+
+            color: #E1BD67 !important;
         }
 
 
-        /* Active navigation */
+        /* =====================================================
+           ACTIVE PAGE
+           ===================================================== */
 
         section[data-testid="stSidebar"]
         [data-testid="stSidebarNav"]
         a[aria-current="page"] {
+
             background:
                 linear-gradient(
                     90deg,
-                    rgba(216, 180, 90, 0.18),
+                    rgba(216, 180, 90, 0.20),
                     rgba(216, 180, 90, 0.05)
                 ) !important;
 
-            color: #e1bd67 !important;
+            color: #E1BD67 !important;
 
-            border-left: 3px solid #d8b45a !important;
+            border-left: 3px solid #D8B45A !important;
 
             font-weight: 750 !important;
         }
 
 
-        /* Active navigation icon */
+        /* =====================================================
+           NAVIGATION ICONS
+           ===================================================== */
+
+        section[data-testid="stSidebar"]
+        [data-testid="stSidebarNav"]
+        a svg {
+
+            color: #AEB7C2 !important;
+
+            fill: #AEB7C2 !important;
+        }
+
+
+        /* Active icon */
 
         section[data-testid="stSidebar"]
         [data-testid="stSidebarNav"]
         a[aria-current="page"] svg {
-            fill: #d8b45a !important;
-            color: #d8b45a !important;
-        }
 
+            color: #D8B45A !important;
 
-        /* Normal navigation icons */
-
-        section[data-testid="stSidebar"]
-        [data-testid="stSidebarNav"]
-        svg {
-            color: #aeb7c2 !important;
+            fill: #D8B45A !important;
         }
 
 
@@ -153,7 +172,9 @@ def apply_sidebar_style():
            ===================================================== */
 
         section[data-testid="stSidebar"] hr {
-            border-color: #29313a !important;
+
+            border-color: #29313A !important;
+
             margin: 1rem 0 !important;
         }
 
@@ -163,10 +184,13 @@ def apply_sidebar_style():
            ===================================================== */
 
         section[data-testid="stSidebar"] button {
-            background: #151b22 !important;
-            color: #e8edf2 !important;
+
+            background: #151B22 !important;
+
+            color: #E8EDF2 !important;
 
             border: 1px solid #303944 !important;
+
             border-radius: 9px !important;
 
             font-family:
@@ -180,20 +204,25 @@ def apply_sidebar_style():
 
 
         section[data-testid="stSidebar"] button:hover {
-            background: #1c242d !important;
-            border-color: #d8b45a !important;
-            color: #e1bd67 !important;
+
+            background: #1C242D !important;
+
+            border-color: #D8B45A !important;
+
+            color: #E1BD67 !important;
         }
 
 
         /* =====================================================
-           SELECTBOX / INPUTS
+           INPUTS
            ===================================================== */
 
         section[data-testid="stSidebar"] input,
         section[data-testid="stSidebar"] textarea {
+
             background: #121820 !important;
-            color: #f1f4f7 !important;
+
+            color: #F1F4F7 !important;
 
             border: 1px solid #303944 !important;
 
@@ -206,33 +235,90 @@ def apply_sidebar_style():
 
 
         /* =====================================================
-           SCROLLBAR
+           SIDEBAR SCROLLBAR
            ===================================================== */
 
         section[data-testid="stSidebar"] ::-webkit-scrollbar {
+
             width: 6px;
         }
 
+
         section[data-testid="stSidebar"] ::-webkit-scrollbar-track {
-            background: #0b0f14;
+
+            background: #0B0F14;
         }
 
+
         section[data-testid="stSidebar"] ::-webkit-scrollbar-thumb {
-            background: #39424d;
+
+            background: #39424D;
+
             border-radius: 10px;
         }
 
+
         section[data-testid="stSidebar"] ::-webkit-scrollbar-thumb:hover {
-            background: #d8b45a;
+
+            background: #D8B45A;
         }
 
 
         /* =====================================================
-           SIDEBAR COLLAPSE BUTTON
+           HIDE STREAMLIT SIDEBAR COLLAPSE ICON
+           
+           This hides:
+           keyboard_double_arrow_left
            ===================================================== */
 
-        button[data-testid="stBaseButton-headerNoPadding"] {
-            color: #d8b45a !important;
+        button[data-testid="stSidebarCollapseButton"] {
+
+            display: none !important;
+        }
+
+
+        /* =====================================================
+           HIDE OLD SIDEBAR COLLAPSE BUTTON
+           ===================================================== */
+
+        button[kind="headerNoPadding"] {
+
+            display: none !important;
+        }
+
+
+        /* =====================================================
+           SIDEBAR HEADER AREA
+           ===================================================== */
+
+        section[data-testid="stSidebar"]
+        div[data-testid="stSidebarHeader"] {
+
+            background: #0B0F14 !important;
+        }
+
+
+        /* =====================================================
+           SIDEBAR TOP BORDER
+           ===================================================== */
+
+        section[data-testid="stSidebar"]::before {
+
+            content: "";
+
+            display: block;
+
+            height: 3px;
+
+            width: 100%;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #9B7430,
+                    #D8B45A,
+                    #9B7430
+                );
         }
 
         </style>
