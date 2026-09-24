@@ -1,3 +1,5 @@
+# src/sidebar_style.py
+
 import streamlit as st
 
 
@@ -7,182 +9,231 @@ def apply_sidebar_style():
         """
         <style>
 
-        /* =========================================
-           PROFESSIONAL JEWELVISION AI SIDEBAR
-           ========================================= */
-
-        /* Sidebar background */
+        /* =====================================================
+           SIDEBAR MAIN
+           ===================================================== */
 
         section[data-testid="stSidebar"] {
-            background: linear-gradient(
-            180deg,
-            #182033 0%,
-            #0b101c 100%
-        );
-
-            border-right: 1px solid #292e3a;
-            width: 260px;
-            min-width: 260px;
+            background: #0b0f14 !important;
+            border-right: 1px solid #2d333b !important;
         }
 
 
-        /* Sidebar inner spacing */
+        /* Sidebar inner container */
 
         section[data-testid="stSidebar"] > div {
-            padding-top: 1.5rem;
+            background: #0b0f14 !important;
         }
 
 
-        /* =========================================
-           BRAND HEADER
-           ========================================= */
+        /* =====================================================
+           SIDEBAR TEXT
+           ===================================================== */
 
-        section[data-testid="stSidebar"]
-        [data-testid="stSidebarNav"]::before {
-
-            content: "💎  JewelVision AI";
-
-            display: block;
-
-            color: #e1c071;
-
-            font-size: 1.35rem;
-
-            font-weight: 800;
-
-            padding: 0.5rem 1rem 1.2rem;
-
-            margin-bottom: 0.8rem;
-
-            border-bottom: 1px solid #292e3a;
-
-            letter-spacing: 0.3px;
-            text-shadow: 0 0 12px rgba(225, 192, 113, 0.25);
+        section[data-testid="stSidebar"] * {
+            font-family:
+                "Inter",
+                "Segoe UI",
+                Arial,
+                sans-serif !important;
         }
 
 
-        /* =========================================
-           SIDEBAR MENU
-           ========================================= */
+        /* Normal text */
+
+        section[data-testid="stSidebar"] p,
+        section[data-testid="stSidebar"] span,
+        section[data-testid="stSidebar"] label {
+            color: #e8edf2 !important;
+        }
+
+
+        /* =====================================================
+           SIDEBAR TITLE / BRAND
+           ===================================================== */
+
+        section[data-testid="stSidebar"] h1,
+        section[data-testid="stSidebar"] h2,
+        section[data-testid="stSidebar"] h3 {
+            color: #d8b45a !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.3px !important;
+        }
+
+
+        /* =====================================================
+           NAVIGATION
+           ===================================================== */
+
+        section[data-testid="stSidebar"] [data-testid="stSidebarNav"] {
+            padding-top: 1rem;
+        }
+
+
+        /* Navigation links */
 
         section[data-testid="stSidebar"]
-        [data-testid="stSidebarNav"] a {
+        [data-testid="stSidebarNav"]
+        a {
+            color: #dfe5eb !important;
+            background: transparent !important;
 
-            border-radius: 16px;
+            border-radius: 10px !important;
 
-            margin: 8px 8px;
+            font-family:
+                "Inter",
+                "Segoe UI",
+                Arial,
+                sans-serif !important;
 
-            padding: 16px 14px;
+            font-size: 15px !important;
+            font-weight: 600 !important;
 
-            min-height: 56px;
+            padding: 0.65rem 0.8rem !important;
 
-            background: rgba(255, 255, 255, 0.025);
-
-            border: 1px solid rgba(255, 255, 255, 0.06);
-
-            color: #e5e7eb;
-
-            font-weight: 600;
+            margin: 3px 0 !important;
 
             transition:
                 background 0.2s ease,
-                color 0.2s ease,
-                border 0.2s ease,
-                box-shadow 0.2s ease;
+                color 0.2s ease !important;
         }
+
+
+        /* Navigation hover */
 
         section[data-testid="stSidebar"]
-        [data-testid="stSidebarNav"] a > span:first-child {
-
-        width: 38px;
-        height: 38px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        border-radius: 50%;
-
-        background: rgba(225, 192, 113, 0.10);
-
-        margin-right: 10px;
-        }
-
-        /* =========================================
-           MENU HOVER
-           ========================================= */
-
-        section[data-testid="stSidebar"]
-        [data-testid="stSidebarNav"] a:hover {
-
-            background: rgba(
-                225,
-                192,
-                113,
-                0.15
-            );
-
-            color: #e1c071;
+        [data-testid="stSidebarNav"]
+        a:hover {
+            background: #171d25 !important;
+            color: #e1bd67 !important;
         }
 
 
-        /* =========================================
-           ACTIVE PAGE
-           ========================================= */
+        /* Active navigation */
 
         section[data-testid="stSidebar"]
         [data-testid="stSidebarNav"]
         a[aria-current="page"] {
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(216, 180, 90, 0.18),
+                    rgba(216, 180, 90, 0.05)
+                ) !important;
 
-        background: linear-gradient(
-            135deg,
-            rgba(225, 192, 113, 0.22),
-            rgba(225, 192, 113, 0.08)
-        );
+            color: #e1bd67 !important;
 
-        color: #e1c071;
+            border-left: 3px solid #d8b45a !important;
 
-        border: 1px solid rgba(225, 192, 113, 0.35);
-
-        border-left: 3px solid #e1c071;
-
-        box-shadow:
-        0 0 18px rgba(225, 192, 113, 0.12);
+            font-weight: 750 !important;
         }
 
 
-        /* =========================================
-           MOBILE SIDEBAR
-           ========================================= */
+        /* Active navigation icon */
 
-        @media (max-width: 700px) {
-
-            section[data-testid="stSidebar"] {
-                width: 230px;
-            }
-
-            section[data-testid="stSidebar"]
-            [data-testid="stSidebarNav"] a {
-
-                margin: 4px 5px;
-
-                padding: 10px;
-
-                font-size: 0.95rem;
-            }
-
-            section[data-testid="stSidebar"]
-            [data-testid="stSidebarNav"]::before {
-
-                font-size: 1.15rem;
-
-                padding:
-                    0.4rem
-                    0.7rem
-                    1rem;
-            }
+        section[data-testid="stSidebar"]
+        [data-testid="stSidebarNav"]
+        a[aria-current="page"] svg {
+            fill: #d8b45a !important;
+            color: #d8b45a !important;
         }
 
+
+        /* Normal navigation icons */
+
+        section[data-testid="stSidebar"]
+        [data-testid="stSidebarNav"]
+        svg {
+            color: #aeb7c2 !important;
+        }
+
+
+        /* =====================================================
+           SIDEBAR DIVIDER
+           ===================================================== */
+
+        section[data-testid="stSidebar"] hr {
+            border-color: #29313a !important;
+            margin: 1rem 0 !important;
+        }
+
+
+        /* =====================================================
+           SIDEBAR BUTTONS
+           ===================================================== */
+
+        section[data-testid="stSidebar"] button {
+            background: #151b22 !important;
+            color: #e8edf2 !important;
+
+            border: 1px solid #303944 !important;
+            border-radius: 9px !important;
+
+            font-family:
+                "Inter",
+                "Segoe UI",
+                Arial,
+                sans-serif !important;
+
+            font-weight: 600 !important;
+        }
+
+
+        section[data-testid="stSidebar"] button:hover {
+            background: #1c242d !important;
+            border-color: #d8b45a !important;
+            color: #e1bd67 !important;
+        }
+
+
+        /* =====================================================
+           SELECTBOX / INPUTS
+           ===================================================== */
+
+        section[data-testid="stSidebar"] input,
+        section[data-testid="stSidebar"] textarea {
+            background: #121820 !important;
+            color: #f1f4f7 !important;
+
+            border: 1px solid #303944 !important;
+
+            font-family:
+                "Inter",
+                "Segoe UI",
+                Arial,
+                sans-serif !important;
+        }
+
+
+        /* =====================================================
+           SCROLLBAR
+           ===================================================== */
+
+        section[data-testid="stSidebar"] ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        section[data-testid="stSidebar"] ::-webkit-scrollbar-track {
+            background: #0b0f14;
+        }
+
+        section[data-testid="stSidebar"] ::-webkit-scrollbar-thumb {
+            background: #39424d;
+            border-radius: 10px;
+        }
+
+        section[data-testid="stSidebar"] ::-webkit-scrollbar-thumb:hover {
+            background: #d8b45a;
+        }
+
+
+        /* =====================================================
+           SIDEBAR COLLAPSE BUTTON
+           ===================================================== */
+
+        button[data-testid="stBaseButton-headerNoPadding"] {
+            color: #d8b45a !important;
+        }
 
         </style>
         """,
