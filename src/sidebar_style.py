@@ -8,12 +8,12 @@ def apply_sidebar_style():
         <style>
 
         /* =====================================================
-           MAIN SIDEBAR
+           SIDEBAR BACKGROUND
         ===================================================== */
 
         section[data-testid="stSidebar"] {
             background: #0B1220 !important;
-            color: #F5F7FA !important;
+            color: #F1F4F7 !important;
             border-right: 1px solid #263247 !important;
         }
 
@@ -21,25 +21,21 @@ def apply_sidebar_style():
             background: #0B1220 !important;
         }
 
+        section[data-testid="stSidebar"] [data-testid="stSidebarContent"] {
+            background: #0B1220 !important;
+        }
+
 
         /* =====================================================
-           SIDEBAR ALL TEXT
+           SIDEBAR FONT
         ===================================================== */
 
-        section[data-testid="stSidebar"],
         section[data-testid="stSidebar"] * {
             font-family:
                 "Inter",
                 "Segoe UI",
                 Arial,
                 sans-serif !important;
-        }
-
-        section[data-testid="stSidebar"] p,
-        section[data-testid="stSidebar"] span,
-        section[data-testid="stSidebar"] label,
-        section[data-testid="stSidebar"] div {
-            color: #F1F4F7 !important;
         }
 
 
@@ -52,8 +48,10 @@ def apply_sidebar_style():
             background: #0B1220 !important;
         }
 
-
-        /* Every navigation item */
+        section[data-testid="stSidebar"]
+        [data-testid="stSidebarNav"] ul {
+            background: #0B1220 !important;
+        }
 
         section[data-testid="stSidebar"]
         [data-testid="stSidebarNav"] li {
@@ -61,8 +59,16 @@ def apply_sidebar_style():
         }
 
 
+        /* =====================================================
+           NAVIGATION ITEMS
+        ===================================================== */
+
         section[data-testid="stSidebar"]
         [data-testid="stSidebarNav"] a {
+
+            display: flex !important;
+
+            align-items: center !important;
 
             background: #111A2B !important;
 
@@ -79,6 +85,8 @@ def apply_sidebar_style():
             padding: 14px 15px !important;
 
             margin: 7px 8px !important;
+
+            opacity: 1 !important;
 
             box-shadow: none !important;
 
@@ -103,7 +111,6 @@ def apply_sidebar_style():
             font-weight: 600 !important;
         }
 
-
         section[data-testid="stSidebar"]
         [data-testid="stSidebarNav"] a p {
 
@@ -122,7 +129,7 @@ def apply_sidebar_style():
 
             background: #182337 !important;
 
-            border-color: #8F6D2F !important;
+            border-color: #D8B45A !important;
 
             color: #D8B45A !important;
         }
@@ -136,9 +143,6 @@ def apply_sidebar_style():
 
         /* =====================================================
            ACTIVE PAGE
-           
-           IMPORTANT:
-           Keep this DARK - no light/grey background
         ===================================================== */
 
         section[data-testid="stSidebar"]
@@ -159,9 +163,6 @@ def apply_sidebar_style():
                 0 0 12px rgba(216, 180, 90, 0.08) !important;
         }
 
-
-        /* Active text */
-
         section[data-testid="stSidebar"]
         [data-testid="stSidebarNav"]
         a[aria-current="page"] span {
@@ -170,7 +171,6 @@ def apply_sidebar_style():
 
             font-weight: 700 !important;
         }
-
 
         section[data-testid="stSidebar"]
         [data-testid="stSidebarNav"]
@@ -194,9 +194,6 @@ def apply_sidebar_style():
             opacity: 1 !important;
         }
 
-
-        /* Active icon */
-
         section[data-testid="stSidebar"]
         [data-testid="stSidebarNav"]
         a[aria-current="page"] svg {
@@ -208,6 +205,31 @@ def apply_sidebar_style():
 
 
         /* =====================================================
+           IMPORTANT
+           HIDE STREAMLIT SIDEBAR COLLAPSE ARROW
+           
+           This hides:
+           keyboard_double_arrow_left
+        ===================================================== */
+
+        button[data-testid="stSidebarCollapseButton"] {
+            display: none !important;
+            visibility: hidden !important;
+            width: 0 !important;
+            height: 0 !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+
+        /* Streamlit alternate header button */
+
+        button[kind="headerNoPadding"] {
+            display: none !important;
+        }
+
+
+        /* =====================================================
            SIDEBAR HEADER
         ===================================================== */
 
@@ -215,49 +237,13 @@ def apply_sidebar_style():
         [data-testid="stSidebarHeader"] {
 
             background: #0B1220 !important;
+
+            min-height: 0 !important;
         }
 
 
         /* =====================================================
-           SIDEBAR COLLAPSE BUTTON
-        ===================================================== */
-
-        button[data-testid="stSidebarCollapseButton"] {
-
-            display: flex !important;
-
-            visibility: visible !important;
-
-            opacity: 1 !important;
-
-            background: #111A2B !important;
-
-            color: #D8B45A !important;
-
-            border: 1px solid #334158 !important;
-
-            border-radius: 8px !important;
-        }
-
-
-        button[data-testid="stSidebarCollapseButton"]:hover {
-
-            background: #182337 !important;
-
-            border-color: #D8B45A !important;
-        }
-
-
-        button[data-testid="stSidebarCollapseButton"] svg {
-
-            color: #D8B45A !important;
-
-            fill: #D8B45A !important;
-        }
-
-
-        /* =====================================================
-           DIVIDERS
+           DIVIDER
         ===================================================== */
 
         section[data-testid="stSidebar"] hr {
@@ -269,7 +255,7 @@ def apply_sidebar_style():
 
 
         /* =====================================================
-           BUTTONS
+           SIDEBAR BUTTONS
         ===================================================== */
 
         section[data-testid="stSidebar"] button {
@@ -282,7 +268,6 @@ def apply_sidebar_style():
 
             border-radius: 9px !important;
         }
-
 
         section[data-testid="stSidebar"] button:hover {
 
@@ -314,30 +299,25 @@ def apply_sidebar_style():
         ===================================================== */
 
         section[data-testid="stSidebar"] ::-webkit-scrollbar {
-
             width: 6px;
         }
 
         section[data-testid="stSidebar"] ::-webkit-scrollbar-track {
-
             background: #0B1220;
         }
 
         section[data-testid="stSidebar"] ::-webkit-scrollbar-thumb {
-
             background: #334158;
-
             border-radius: 10px;
         }
 
         section[data-testid="stSidebar"] ::-webkit-scrollbar-thumb:hover {
-
             background: #D8B45A;
         }
 
 
         /* =====================================================
-           TOP GOLD LINE
+           GOLD TOP LINE
         ===================================================== */
 
         section[data-testid="stSidebar"]::before {
@@ -361,13 +341,12 @@ def apply_sidebar_style():
 
 
         /* =====================================================
-           MOBILE SIDEBAR
+           MOBILE
         ===================================================== */
 
         @media (max-width: 768px) {
 
             section[data-testid="stSidebar"] {
-
                 background: #0B1220 !important;
             }
 
