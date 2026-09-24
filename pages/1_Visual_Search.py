@@ -24,6 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 CATALOG_FILE = BASE_DIR / "jewelry_catalog.json"
 
+GOLD_DIR = BASE_DIR / "data" / "gold"
+
+PROTOTYPE_DIR = BASE_DIR / "data" / "prototype"
+
 
 # ============================================================
 # STYLING
@@ -110,14 +114,6 @@ st.markdown(
         border-radius: 10px;
     }
 
-    .result-card {
-        background: #101319;
-        border: 1px solid #292e38;
-        border-radius: 16px;
-        padding: 18px;
-        margin-bottom: 18px;
-    }
-
     </style>
     """,
     unsafe_allow_html=True,
@@ -125,12 +121,12 @@ st.markdown(
 
 
 # ============================================================
-# FUNCTIONS
+# HELPER FUNCTIONS
 # ============================================================
 
 def indexes_exist():
     """
-    Check whether both FAISS indexes exist.
+    Check whether required FAISS indexes exist.
     """
 
     return (
@@ -141,7 +137,7 @@ def indexes_exist():
 
 def load_catalog():
     """
-    Load jewelry catalog JSON.
+    Load jewelry catalog.
     """
 
     if not CATALOG_FILE.exists():
@@ -164,7 +160,7 @@ def load_catalog():
 
 def get_jewelry_details(image_path):
     """
-    Find jewelry metadata using image filename.
+    Find catalog record using image filename.
     """
 
     if not image_path:
@@ -172,46 +168,130 @@ def get_jewelry_details(image_path):
 
     catalog = load_catalog()
 
-    if not catalog:
-        return None
-
-    target_name = Path(
+    target_filename = Path(
         str(image_path)
     ).name
 
     for item in catalog:
 
-        item_image = item.get(
+        catalog_image = item.get(
             "image",
             ""
         )
 
-        if not item_image:
+        if not catalog_image:
             continue
 
-        catalog_image_name = Path(
-            str(item_image)
+        catalog_filename = Path(
+            str(catalog_image)
         ).name
 
-        if catalog_image_name == target_name:
+        if catalog_filename == target_filename:
+
             return item
 
     return None
 
 
+def resolve_image_path(image_path):
+    """
+    Convert the path returned by FAISS/search.py
+    into a valid local path on Render.
+    """
+
+    if not image_path:
+        return None
+
+    try:
+
+        raw_path = str(image_path).strip()
+
+        if not raw_path:
+            return None
+
+        path = Path(raw_path)
+
+        # ----------------------------------------------------
+        # 1. Absolute path
+        # ----------------------------------------------------
+
+        if path.is_absolute() and path.exists():
+
+            return path
+
+
+        # ----------------------------------------------------
+        # 2. Path relative to project root
+        # ----------------------------------------------------
+
+        project_path = BASE_DIR / path
+
+        if project_path.exists():
+
+            return project_path
+
+
+        # ----------------------------------------------------
+        # 3. Filename only
+        # ----------------------------------------------------
+
+        filename = path.name
+
+
+        # Gold folder
+        gold_path = GOLD_DIR / filename
+
+        if gold_path.exists():
+
+            return gold_path
+
+
+        # Prototype folder
+        prototype_path = PROTOTYPE_DIR / filename
+
+        if prototype_path.exists():
+
+            return prototype_path
+
+
+        # ----------------------------------------------------
+        # 4. Search recursively
+        # ----------------------------------------------------
+
+        for folder in [
+            GOLD_DIR,
+            PROTOTYPE_DIR,
+        ]:
+
+            if not folder.exists():
+                continue
+
+            matches = list(
+                folder.rglob(filename)
+            )
+
+            if matches:
+
+                return matches[0]
+
+
+    except Exception:
+
+        return None
+
+    return None
+
+
 # ============================================================
-# LAZY LOAD AI SEARCH ENGINE
+# LAZY LOAD SEARCH ENGINE
 # ============================================================
 
 @st.cache_resource(
     show_spinner=False
 )
 def load_search_engine():
-    """
-    Heavy DINOv2 / Torch / FAISS code is loaded
-    only when the user starts a search.
-    """
 
+    # Heavy AI libraries are loaded only when search starts.
     from src.search import BidirectionalJewelrySearch
 
     return BidirectionalJewelrySearch()
@@ -264,7 +344,7 @@ st.write(
 
 
 # ============================================================
-# INDEX STATUS
+# INDEX CHECK
 # ============================================================
 
 if not indexes_exist():
@@ -282,7 +362,7 @@ if not indexes_exist():
 
 
 # ============================================================
-# SEARCH MODE
+# SEARCH SETTINGS
 # ============================================================
 
 with st.container(border=True):
@@ -369,14 +449,10 @@ search_button = st.button(
 
 
 # ============================================================
-# SEARCH PROCESS
+# SEARCH
 # ============================================================
 
 if search_button:
-
-    # --------------------------------------------------------
-    # VALIDATE IMAGE
-    # --------------------------------------------------------
 
     if uploaded_image is None:
 
@@ -390,7 +466,7 @@ if search_button:
     try:
 
         # ----------------------------------------------------
-        # PREPARE IMAGE
+        # PREPARE QUERY IMAGE
         # ----------------------------------------------------
 
         with st.spinner(
@@ -421,11 +497,6 @@ if search_button:
             "🔍 Searching for visually similar jewelry..."
         ):
 
-
-            # =================================================
-            # GOLD ONLY
-            # =================================================
-
             if search_mode == "Gold Collection":
 
                 results = search_engine.search_gold(
@@ -433,10 +504,6 @@ if search_button:
                     top_k=TOP_K,
                 )
 
-
-            # =================================================
-            # PROTOTYPE ONLY
-            # =================================================
 
             elif search_mode == "Prototype Collection":
 
@@ -446,47 +513,55 @@ if search_button:
                 )
 
 
-            # =================================================
-            # ALL JEWELRY
-            # =================================================
-
             else:
 
-                # Search Gold
                 gold_results = search_engine.search_gold(
                     query_image=query_image,
                     top_k=TOP_K,
                 )
 
-                # Search Prototype
                 prototype_results = search_engine.search_prototype(
                     query_image=query_image,
                     top_k=TOP_K,
                 )
 
-                # Combine both
                 results = (
                     gold_results +
                     prototype_results
                 )
 
-                # Sort by similarity
+                # ------------------------------------------------
+                # SORT RESULTS
+                # ------------------------------------------------
+
+                def get_similarity(item):
+
+                    try:
+
+                        return float(
+                            item.get(
+                                "similarity",
+                                0
+                            )
+                        )
+
+                    except Exception:
+
+                        return 0
+
+
                 results = sorted(
                     results,
-                    key=lambda item: item.get(
-                        "similarity",
-                        0.0
-                    ),
+                    key=get_similarity,
                     reverse=True,
                 )
 
-                # Keep only TOP_K
                 results = results[:TOP_K]
 
 
-        # ----------------------------------------------------
-        # RESULTS HEADER
-        # ----------------------------------------------------
+        # ====================================================
+        # RESULTS
+        # ====================================================
 
         st.divider()
 
@@ -494,10 +569,6 @@ if search_button:
             "✨ Search Results"
         )
 
-
-        # ----------------------------------------------------
-        # NO RESULTS
-        # ----------------------------------------------------
 
         if not results:
 
@@ -528,7 +599,7 @@ if search_button:
         ):
 
             # ------------------------------------------------
-            # RESULT DATA
+            # GET RESULT DATA
             # ------------------------------------------------
 
             image_path = result.get(
@@ -541,7 +612,16 @@ if search_button:
 
 
             # ------------------------------------------------
-            # RESULT COLUMNS
+            # RESOLVE IMAGE
+            # ------------------------------------------------
+
+            resolved_path = resolve_image_path(
+                image_path
+            )
+
+
+            # ------------------------------------------------
+            # RESULT LAYOUT
             # ------------------------------------------------
 
             result_col1, result_col2 = st.columns(
@@ -556,25 +636,35 @@ if search_button:
 
             with result_col1:
 
-                if image_path:
+                if resolved_path:
 
                     try:
 
                         st.image(
-                            str(image_path),
+                            str(resolved_path),
+                            caption=f"Result #{index}",
                             use_container_width=True,
                         )
 
-                    except Exception:
+                    except Exception as image_error:
 
                         st.warning(
                             "Image preview unavailable."
                         )
 
+                        st.caption(
+                            str(image_error)
+                        )
+
                 else:
 
                     st.warning(
-                        "Image path unavailable."
+                        "Image preview unavailable."
+                    )
+
+                    st.caption(
+                        f"Path returned by search: "
+                        f"{image_path}"
                     )
 
 
@@ -590,7 +680,7 @@ if search_button:
 
 
                 # --------------------------------------------
-                # GET CATALOG DATA
+                # CATALOG DETAILS
                 # --------------------------------------------
 
                 jewelry_details = (
@@ -603,7 +693,8 @@ if search_button:
                 if jewelry_details:
 
                     st.markdown(
-                        f"### {jewelry_details.get('name', 'Jewelry')}"
+                        f"### "
+                        f"{jewelry_details.get('name', 'Jewelry')}"
                     )
 
                     st.write(
@@ -646,7 +737,7 @@ if search_button:
 
 
                 # --------------------------------------------
-                # SIMILARITY
+                # SIMILARITY SCORE
                 # --------------------------------------------
 
                 if similarity is not None:
@@ -657,11 +748,36 @@ if search_button:
                             similarity
                         )
 
-                        similarity_percent = (
-                            similarity_value * 100
-                        )
+                        # Handle both 0-1 and 0-100 formats
+                        if similarity_value <= 1:
 
-                        if similarity_value >= SIMILARITY_THRESHOLD:
+                            similarity_percent = (
+                                similarity_value * 100
+                            )
+
+                        else:
+
+                            similarity_percent = (
+                                similarity_value
+                            )
+
+
+                        if similarity_value <= 1:
+
+                            threshold_check = (
+                                similarity_value
+                                >= SIMILARITY_THRESHOLD
+                            )
+
+                        else:
+
+                            threshold_check = (
+                                similarity_percent
+                                >= SIMILARITY_THRESHOLD * 100
+                            )
+
+
+                        if threshold_check:
 
                             st.success(
                                 f"Similarity: "
@@ -678,19 +794,27 @@ if search_button:
                     except Exception:
 
                         st.caption(
-                            f"Similarity score: {similarity}"
+                            f"Similarity score: "
+                            f"{similarity}"
                         )
 
 
                 # --------------------------------------------
-                # FILE NAME
+                # IMAGE PATH
                 # --------------------------------------------
 
-                if image_path:
+                if resolved_path:
 
                     st.caption(
-                        "Image: "
-                        f"{Path(str(image_path)).name}"
+                        f"Image: "
+                        f"{resolved_path.name}"
+                    )
+
+                elif image_path:
+
+                    st.caption(
+                        f"Image path: "
+                        f"{image_path}"
                     )
 
 
