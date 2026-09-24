@@ -8,10 +8,11 @@ from src.config import (
     GOLD_INDEX_FILE,
     PROTOTYPE_INDEX_FILE,
 )
-from src.build_index import build_all_indexes
+
 from src.sidebar_style import apply_sidebar_style
 
 apply_sidebar_style()
+
 
 # ============================================================
 # PATHS
@@ -172,19 +173,14 @@ def save_jewelry(
     # --------------------------------------------------------
 
     if collection == "Gold":
-
         save_folder = GOLD_DIR
-
     else:
-
         save_folder = PROTOTYPE_DIR
-
 
     save_folder.mkdir(
         parents=True,
         exist_ok=True
     )
-
 
     # --------------------------------------------------------
     # CREATE FILE NAME
@@ -210,7 +206,6 @@ def save_jewelry(
 
     image_path = save_folder / filename
 
-
     # --------------------------------------------------------
     # SAVE IMAGE
     # --------------------------------------------------------
@@ -223,7 +218,6 @@ def save_jewelry(
         file.write(
             uploaded_file.getbuffer()
         )
-
 
     # --------------------------------------------------------
     # CREATE CATALOG RECORD
@@ -252,16 +246,13 @@ def save_jewelry(
         ),
     }
 
-
     catalog.append(
         jewelry
     )
 
-
     save_catalog(
         catalog
     )
-
 
     return jewelry
 
@@ -334,7 +325,6 @@ with st.container(border=True):
 
     st.write("")
 
-
     # --------------------------------------------------------
     # IMAGE PREVIEW
     # --------------------------------------------------------
@@ -367,9 +357,7 @@ with st.container(border=True):
                 "The image will be stored in the selected collection."
             )
 
-
     st.divider()
-
 
     # --------------------------------------------------------
     # NAME + GENDER
@@ -395,7 +383,6 @@ with st.container(border=True):
             ],
         )
 
-
     # --------------------------------------------------------
     # TYPE + SUBTYPE
     # --------------------------------------------------------
@@ -419,7 +406,6 @@ with st.container(border=True):
                 "Other",
             ],
         )
-
 
     subtype_options = {
 
@@ -509,14 +495,12 @@ with st.container(border=True):
         ],
     }
 
-
     with col4:
 
         jewelry_subtype = st.selectbox(
             "Jewelry Subtype *",
             subtype_options[jewelry_type],
         )
-
 
     # --------------------------------------------------------
     # COLLECTION
@@ -530,7 +514,6 @@ with st.container(border=True):
         ],
     )
 
-
     # --------------------------------------------------------
     # DESCRIPTION
     # --------------------------------------------------------
@@ -541,9 +524,7 @@ with st.container(border=True):
         height=110,
     )
 
-
     st.write("")
-
 
     # --------------------------------------------------------
     # SUBMIT
@@ -574,7 +555,6 @@ if submit_jewelry:
 
         st.stop()
 
-
     if not jewelry_name.strip():
 
         st.error(
@@ -582,7 +562,6 @@ if submit_jewelry:
         )
 
         st.stop()
-
 
     # --------------------------------------------------------
     # SAVE IMAGE + METADATA
@@ -611,11 +590,9 @@ if submit_jewelry:
                 description=description,
             )
 
-
         st.success(
             "✨ Jewelry information saved successfully!"
         )
-
 
         # ----------------------------------------------------
         # UPDATE AI INDEX
@@ -625,13 +602,17 @@ if submit_jewelry:
             "🤖 Updating DINOv2 and FAISS search index..."
         ):
 
+            # IMPORTANT:
+            # Heavy DINOv2 / FAISS code is imported only
+            # when the user clicks the update button.
+            from src.build_index import build_all_indexes
+
             build_all_indexes()
 
         st.success(
             "🚀 AI search index updated. "
             "This jewelry is now searchable."
         )
-
 
         # ----------------------------------------------------
         # RESULT
@@ -643,12 +624,10 @@ if submit_jewelry:
             "Jewelry Added Successfully"
         )
 
-
         result_col1, result_col2 = st.columns(
             [1, 1],
             gap="large"
         )
-
 
         with result_col1:
 
@@ -656,7 +635,6 @@ if submit_jewelry:
                 jewelry_image,
                 use_container_width=True
             )
-
 
         with result_col2:
 
@@ -694,7 +672,6 @@ if submit_jewelry:
             st.success(
                 "Available for AI visual search"
             )
-
 
     except Exception as e:
 
