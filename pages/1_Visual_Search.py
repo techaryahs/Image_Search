@@ -10,7 +10,6 @@ from src.config import (
     PROTOTYPE_DIR,
     GOLD_INDEX_FILE,
     PROTOTYPE_INDEX_FILE,
-    SIMILARITY_THRESHOLD,
     TOP_K,
 )
 
@@ -23,8 +22,21 @@ from src.sidebar_style import apply_sidebar_style
 
 apply_sidebar_style()
 
-
 CATALOG_FILE = BASE_DIR / "jewelry_catalog.json"
+
+
+# ============================================================
+# RELEVANCE SETTINGS
+# ============================================================
+
+# Higher value = stricter relevance checking.
+#
+# Example:
+# 0.80 = less strict
+# 0.85 = strict
+# 0.90 = very strict
+#
+RELEVANCE_THRESHOLD = 0.85
 
 
 # ============================================================
@@ -35,9 +47,9 @@ st.markdown(
     """
     <style>
 
-    /* =========================================
+    /* =====================================================
        MAIN APP
-    ========================================= */
+    ===================================================== */
 
     .stApp {
         background:
@@ -56,9 +68,9 @@ st.markdown(
     }
 
 
-    /* =========================================
+    /* =====================================================
        HEADINGS
-    ========================================= */
+    ===================================================== */
 
     h1 {
         font-size: 2.4rem !important;
@@ -67,12 +79,10 @@ st.markdown(
         color: #F1F4F7 !important;
     }
 
-
     h2 {
         color: #F1F4F7 !important;
         font-weight: 750 !important;
     }
-
 
     h3 {
         color: #E8EDF2 !important;
@@ -80,53 +90,41 @@ st.markdown(
     }
 
 
-    /* =========================================
+    /* =====================================================
        CONTAINERS
-    ========================================= */
+    ===================================================== */
 
     div[data-testid="stVerticalBlockBorderWrapper"] {
-
         background: #10151C !important;
-
         border: 1px solid #2C343E !important;
-
         border-radius: 16px !important;
     }
 
 
-    /* =========================================
+    /* =====================================================
        DIVIDER
-    ========================================= */
+    ===================================================== */
 
     hr {
         border-color: #29313A !important;
     }
 
 
-    /* =========================================
+    /* =====================================================
        BUTTON
-    ========================================= */
+    ===================================================== */
 
     .stButton > button {
-
         min-height: 48px;
-
         border-radius: 10px;
-
         border: 1px solid #39424D;
-
         background: #151B22;
-
         color: #F1F4F7;
-
         font-weight: 700;
     }
 
-
     .stButton > button:hover {
-
         border-color: #D8B45A;
-
         color: #E1BD67;
     }
 
@@ -135,7 +133,6 @@ st.markdown(
 
     div[data-testid="stButton"]
     button[kind="primary"] {
-
         background:
             linear-gradient(
                 135deg,
@@ -151,65 +148,98 @@ st.markdown(
     }
 
 
-    /* =========================================
+    /* =====================================================
        FILE UPLOADER
-    ========================================= */
+    ===================================================== */
 
     [data-testid="stFileUploader"] {
-
         background: #10151C;
-
         border: 1px dashed #66542F;
-
         border-radius: 14px;
-
         padding: 0.5rem;
     }
 
-
     [data-testid="stFileUploaderDropzone"] {
-
         background: #151B22;
-
         border-radius: 10px;
     }
 
 
-    /* =========================================
-       METRIC / SCORE
-    ========================================= */
+    /* =====================================================
+       SIMILARITY BOX
+    ===================================================== */
 
     .similarity-box {
-
         padding: 12px 16px;
-
         border-radius: 10px;
-
         background: rgba(216, 180, 90, 0.10);
-
         border: 1px solid rgba(216, 180, 90, 0.30);
-
         color: #E1BD67;
-
         font-weight: 700;
     }
 
 
-    /* =========================================
-       RESULT CARD
-    ========================================= */
+    /* =====================================================
+       RESULT TITLE
+    ===================================================== */
 
     .result-title {
-
         color: #D8B45A;
-
         font-size: 20px;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+
+    /* =====================================================
+       IRRELEVANT IMAGE BOX
+    ===================================================== */
+
+    .irrelevant-box {
+        padding: 22px;
+        margin-top: 15px;
+
+        background: #1A1010;
+
+        border: 1px solid #7A3030;
+
+        border-radius: 14px;
+
+        text-align: center;
+    }
+
+    .irrelevant-title {
+        color: #FF6B6B;
+
+        font-size: 25px;
 
         font-weight: 800;
 
         margin-bottom: 10px;
     }
 
+    .irrelevant-text {
+        color: #E8EDF2;
+
+        font-size: 15px;
+
+        line-height: 1.6;
+    }
+
+
+    /* =====================================================
+       SUCCESS BOX
+    ===================================================== */
+
+    .relevant-box {
+        padding: 15px;
+
+        background: rgba(216, 180, 90, 0.08);
+
+        border: 1px solid rgba(216, 180, 90, 0.25);
+
+        border-radius: 12px;
+    }
 
     </style>
     """,
@@ -223,7 +253,7 @@ st.markdown(
 
 def indexes_exist():
     """
-    Check whether both FAISS indexes exist.
+    Check whether both Gold and Prototype FAISS indexes exist.
     """
 
     return (
@@ -241,9 +271,7 @@ def load_catalog():
     """
 
     if not CATALOG_FILE.exists():
-
         return []
-
 
     try:
 
@@ -255,16 +283,16 @@ def load_catalog():
 
             data = json.load(file)
 
-
         if isinstance(data, list):
-
             return data
-
 
         return []
 
+    except Exception as error:
 
-    except Exception:
+        print(
+            f"Error loading catalog: {error}"
+        )
 
         return []
 
@@ -274,21 +302,17 @@ def load_catalog():
 
 def get_jewelry_details(image_path):
     """
-    Find jewelry information using image filename.
+    Find jewelry details using image filename.
     """
 
     if not image_path:
-
         return None
-
 
     filename = Path(
         str(image_path)
     ).name.lower()
 
-
     catalog = load_catalog()
-
 
     for item in catalog:
 
@@ -297,21 +321,16 @@ def get_jewelry_details(image_path):
             "",
         )
 
-
         if not catalog_image:
-
             continue
-
 
         catalog_filename = Path(
             str(catalog_image)
         ).name.lower()
 
-
         if catalog_filename == filename:
 
             return item
-
 
     return None
 
@@ -321,21 +340,19 @@ def get_jewelry_details(image_path):
 
 def resolve_image_path(image_path):
     """
-    Resolve image paths created on another machine.
+    Resolve image path for local machine and Render.
 
     Handles:
     - Windows paths
     - Linux paths
-    - relative paths
-    - filenames
+    - Relative paths
+    - Project paths
     - Gold folder
     - Prototype folder
     """
 
     if not image_path:
-
         return None
-
 
     try:
 
@@ -343,77 +360,64 @@ def resolve_image_path(image_path):
             image_path
         ).strip()
 
-
         if not raw_path:
-
             return None
 
-
-        # Convert Windows separators
-        normalized = raw_path.replace(
+        # Convert Windows separators to Linux-compatible format
+        normalized_path = raw_path.replace(
             "\\",
             "/",
         )
 
-
-        path = Path(normalized)
-
+        path = Path(
+            normalized_path
+        )
 
         # ----------------------------------------------------
-        # 1. Existing absolute path
+        # 1. Existing path
         # ----------------------------------------------------
 
-        if path.is_absolute():
+        if path.exists():
 
-            if path.exists():
-
-                return path
-
+            return path
 
         # ----------------------------------------------------
         # 2. Relative to project
         # ----------------------------------------------------
 
         project_path = (
-            BASE_DIR / normalized
+            BASE_DIR / normalized_path
         )
-
 
         if project_path.exists():
 
             return project_path
 
-
         # ----------------------------------------------------
-        # 3. Filename
+        # 3. Search by filename
         # ----------------------------------------------------
 
         filename = Path(
-            normalized
+            normalized_path
         ).name
-
 
         # Gold
         gold_path = (
             GOLD_DIR / filename
         )
 
-
         if gold_path.exists():
 
             return gold_path
-
 
         # Prototype
         prototype_path = (
             PROTOTYPE_DIR / filename
         )
 
-
         if prototype_path.exists():
 
             return prototype_path
-
 
         # ----------------------------------------------------
         # 4. Recursive search
@@ -425,24 +429,21 @@ def resolve_image_path(image_path):
         ]:
 
             if not folder.exists():
-
                 continue
-
 
             matches = list(
                 folder.rglob(filename)
             )
 
-
             if matches:
 
                 return matches[0]
 
+    except Exception as error:
 
-    except Exception:
-
-        return None
-
+        print(
+            f"Image path resolution error: {error}"
+        )
 
     return None
 
@@ -474,13 +475,12 @@ def get_similarity(result):
 
 def similarity_percentage(score):
     """
-    Convert similarity to percentage.
+    Convert similarity score to percentage.
     """
 
     if score <= 1:
 
         return score * 100
-
 
     return score
 
@@ -488,13 +488,18 @@ def similarity_percentage(score):
 # ============================================================
 
 
-def is_relevant(score):
+def image_is_relevant(best_similarity):
     """
-    Check whether result passes similarity threshold.
+    Determine whether uploaded image is relevant.
+
+    Only images whose best similarity reaches
+    the configured threshold are accepted.
     """
 
-    # Similarity from FAISS is normally 0-1.
-    return score >= SIMILARITY_THRESHOLD
+    return (
+        best_similarity
+        >= RELEVANCE_THRESHOLD
+    )
 
 
 # ============================================================
@@ -556,11 +561,9 @@ with header_right:
 
 st.divider()
 
-
 st.subheader(
     "Find Similar Jewelry"
 )
-
 
 st.write(
     "Upload a jewelry image below. JewelVision AI "
@@ -597,7 +600,6 @@ with st.container(border=True):
         "### Search Collection"
     )
 
-
     search_mode = st.radio(
         "Select collection",
         [
@@ -616,13 +618,11 @@ with st.container(border=True):
 
 st.write("")
 
-
 with st.container(border=True):
 
     st.write(
         "### Upload Jewelry Image"
     )
-
 
     uploaded_image = st.file_uploader(
         "Choose a jewelry image",
@@ -639,17 +639,14 @@ with st.container(border=True):
         ),
     )
 
-
     if uploaded_image:
 
         st.write("")
-
 
         preview_col1, preview_col2 = st.columns(
             [1, 2],
             gap="large",
         )
-
 
         with preview_col1:
 
@@ -659,18 +656,15 @@ with st.container(border=True):
                 use_container_width=True,
             )
 
-
         with preview_col2:
 
             st.success(
                 "Image ready for visual search."
             )
 
-
             st.caption(
                 f"File: {uploaded_image.name}"
             )
-
 
             st.caption(
                 "The AI will compare this image "
@@ -684,7 +678,6 @@ with st.container(border=True):
 
 st.write("")
 
-
 search_button = st.button(
     "🔎  Find Similar Jewelry",
     type="primary",
@@ -693,13 +686,13 @@ search_button = st.button(
 
 
 # ============================================================
-# SEARCH PROCESS
+# SEARCH
 # ============================================================
 
 if search_button:
 
     # --------------------------------------------------------
-    # CHECK UPLOAD
+    # CHECK IMAGE
     # --------------------------------------------------------
 
     if uploaded_image is None:
@@ -714,7 +707,7 @@ if search_button:
     try:
 
         # ----------------------------------------------------
-        # OPEN IMAGE
+        # OPEN QUERY IMAGE
         # ----------------------------------------------------
 
         with st.spinner(
@@ -747,7 +740,6 @@ if search_button:
             "🔍 Searching jewelry catalog..."
         ):
 
-
             if search_mode == "Gold Collection":
 
                 results = (
@@ -756,7 +748,6 @@ if search_button:
                         top_k=TOP_K,
                     )
                 )
-
 
             elif search_mode == "Prototype Collection":
 
@@ -767,7 +758,6 @@ if search_button:
                     )
                 )
 
-
             else:
 
                 gold_results = (
@@ -777,7 +767,6 @@ if search_button:
                     )
                 )
 
-
                 prototype_results = (
                     search_engine.search_prototype(
                         query_image=query_image,
@@ -785,22 +774,18 @@ if search_button:
                     )
                 )
 
-
                 results = (
                     gold_results
                     + prototype_results
                 )
 
-
-                # Sort by similarity
+                # Sort highest similarity first
                 results = sorted(
                     results,
                     key=get_similarity,
                     reverse=True,
                 )
 
-
-                # Keep top results
                 results = results[:TOP_K]
 
 
@@ -810,90 +795,129 @@ if search_button:
 
         if not results:
 
-            st.warning(
-                "⚠️ No matching jewelry found."
-            )
+            st.markdown(
+                """
+                <div class="irrelevant-box">
 
-            st.info(
-                "Please upload a clear jewelry image "
-                "and try again."
+                    <div class="irrelevant-title">
+                        ❌ IRRELEVANT IMAGE
+                    </div>
+
+                    <div class="irrelevant-text">
+                        No relevant jewelry was found
+                        for the uploaded image.
+                        <br><br>
+                        Please upload a clear image of
+                        a ring, necklace, earring,
+                        bracelet, pendant, or other jewelry.
+                    </div>
+
+                </div>
+                """,
+                unsafe_allow_html=True,
             )
 
             st.stop()
 
 
         # ====================================================
-        # BEST SIMILARITY
+        # FIND BEST SIMILARITY
         # ====================================================
 
-        best_similarity = max(
+        similarity_scores = [
             get_similarity(result)
             for result in results
+        ]
+
+        best_similarity = max(
+            similarity_scores
         )
 
 
         # ====================================================
-        # IMPORTANT:
-        # IRRELEVANT IMAGE CHECK
+        # STRICT IRRELEVANT IMAGE CHECK
         # ====================================================
 
-        if not is_relevant(
+        if not image_is_relevant(
             best_similarity
         ):
 
-            st.error(
-                "❌ Irrelevant Image"
+            # -----------------------------------------------
+            # DO NOT DISPLAY ANY SEARCH RESULTS
+            # -----------------------------------------------
+
+            st.markdown(
+                """
+                <div class="irrelevant-box">
+
+                    <div class="irrelevant-title">
+                        ❌ IRRELEVANT IMAGE
+                    </div>
+
+                    <div class="irrelevant-text">
+                        The uploaded image does not appear
+                        to be a relevant jewelry image.
+                        <br><br>
+                        Please upload a clear image of
+                        jewelry such as a ring, necklace,
+                        earring, bracelet, or pendant.
+                    </div>
+
+                </div>
+                """,
+                unsafe_allow_html=True,
             )
 
+            st.write("")
 
-            st.warning(
-                "The uploaded image does not appear "
-                "to be a relevant jewelry image."
-            )
+            score_col1, score_col2 = st.columns(2)
 
+            with score_col1:
 
-            st.info(
-                "Please upload a clear image of "
-                "jewelry such as a ring, necklace, "
-                "earring, bracelet, or other jewelry."
-            )
+                st.metric(
+                    "Best Similarity",
+                    f"{similarity_percentage(best_similarity):.1f}%",
+                )
 
+            with score_col2:
 
-            st.caption(
-                f"Best similarity score: "
-                f"{best_similarity:.2f}  |  "
-                f"Required threshold: "
-                f"{SIMILARITY_THRESHOLD:.2f}"
-            )
-
+                st.metric(
+                    "Required Similarity",
+                    f"{similarity_percentage(RELEVANCE_THRESHOLD):.1f}%",
+                )
 
             st.stop()
 
 
         # ====================================================
-        # RELEVANT RESULTS
+        # RELEVANT IMAGE
         # ====================================================
 
         st.divider()
-
 
         st.subheader(
             "✨ Similar Jewelry"
         )
 
+        st.markdown(
+            """
+            <div class="relevant-box">
 
-        st.success(
-            "Relevant jewelry image detected."
+                <strong>
+                    ✅ Relevant jewelry image detected.
+                </strong>
+
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
 
+        st.write("")
 
         st.caption(
             f"Best similarity: "
             f"{similarity_percentage(best_similarity):.1f}%"
         )
-
-
-        st.write("")
 
 
         # ====================================================
@@ -909,17 +933,14 @@ if search_button:
                 "image_path"
             )
 
-
             original_image_path = result.get(
                 "original_image_path",
                 image_path,
             )
 
-
             similarity = get_similarity(
                 result
             )
-
 
             resolved_path = (
                 resolve_image_path(
@@ -929,7 +950,7 @@ if search_button:
 
 
             # =================================================
-            # RESULT CARD
+            # RESULT COLUMNS
             # =================================================
 
             result_col1, result_col2 = st.columns(
@@ -939,7 +960,7 @@ if search_button:
 
 
             # =================================================
-            # IMAGE
+            # RESULT IMAGE
             # =================================================
 
             with result_col1:
@@ -970,7 +991,6 @@ if search_button:
                         "Image preview unavailable."
                     )
 
-
                     st.caption(
                         "The search result was found, "
                         "but the image file could not "
@@ -978,14 +998,8 @@ if search_button:
                     )
 
 
-                    # Debug path
-                    st.code(
-                        str(original_image_path)
-                    )
-
-
             # =================================================
-            # DETAILS
+            # RESULT DETAILS
             # =================================================
 
             with result_col2:
@@ -1000,9 +1014,9 @@ if search_button:
                 )
 
 
-                # ---------------------------------------------
-                # CATALOG DETAILS
-                # ---------------------------------------------
+                # ------------------------------------------------
+                # CATALOG INFORMATION
+                # ------------------------------------------------
 
                 jewelry_details = (
                     get_jewelry_details(
@@ -1018,7 +1032,6 @@ if search_button:
                         "Jewelry",
                     )
 
-
                     st.markdown(
                         f"### {name}"
                     )
@@ -1029,18 +1042,15 @@ if search_button:
                         "-",
                     )
 
-
                     jewelry_type = jewelry_details.get(
                         "type",
                         "-",
                     )
 
-
                     subtype = jewelry_details.get(
                         "subtype",
                         "-",
                     )
-
 
                     collection = jewelry_details.get(
                         "collection",
@@ -1052,16 +1062,13 @@ if search_button:
                         f"**Gender:** {gender}"
                     )
 
-
                     st.write(
                         f"**Type:** {jewelry_type}"
                     )
 
-
                     st.write(
                         f"**Subtype:** {subtype}"
                     )
-
 
                     st.write(
                         f"**Collection:** {collection}"
@@ -1081,7 +1088,6 @@ if search_button:
                             f"{description}"
                         )
 
-
                 else:
 
                     st.caption(
@@ -1089,9 +1095,9 @@ if search_button:
                     )
 
 
-                # ---------------------------------------------
+                # ------------------------------------------------
                 # SIMILARITY
-                # ---------------------------------------------
+                # ------------------------------------------------
 
                 percentage = (
                     similarity_percentage(
@@ -1103,7 +1109,10 @@ if search_button:
                 st.markdown(
                     f"""
                     <div class="similarity-box">
-                        ✨ Similarity: {percentage:.1f}%
+
+                        ✨ Similarity:
+                        {percentage:.1f}%
+
                     </div>
                     """,
                     unsafe_allow_html=True,
@@ -1112,10 +1121,6 @@ if search_button:
 
                 st.write("")
 
-
-                # ---------------------------------------------
-                # IMAGE FILE
-                # ---------------------------------------------
 
                 if resolved_path:
 
@@ -1136,7 +1141,7 @@ if search_button:
 
 
     # ========================================================
-    # ERROR
+    # ERROR HANDLING
     # ========================================================
 
     except Exception as error:
@@ -1155,7 +1160,6 @@ if search_button:
 # ============================================================
 
 st.divider()
-
 
 st.caption(
     "💎 JewelVision AI  •  DINOv2 Visual Search  •  "
